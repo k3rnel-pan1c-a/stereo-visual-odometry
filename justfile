@@ -7,5 +7,5 @@ configure:
     mkdir -p build
     cd build && cmake ..
 
-run name:
-    ./build/{{name}}
+run name +args:
+    ./build/{{name}} {{args}}
