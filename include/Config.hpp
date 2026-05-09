@@ -1,7 +1,7 @@
 #pragma once
 
 struct Config {
-        int max_frames = 500;
+        int max_frames = 1500;
 
         int orb_features = 3000;
 
