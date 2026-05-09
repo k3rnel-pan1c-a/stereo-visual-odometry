@@ -3,6 +3,18 @@ layout: default
 title: Stereo Visual Odometry
 ---
 
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
@@ -246,18 +258,12 @@ The headline numbers — 1.44% drift on KITTI 07 and 1.02% on KITTI 00 — are w
 </figure>
 
 <figure>
-  <div class="placeholder">
-    <strong>[FIGURE PLACEHOLDER]</strong><br>
-    <em>Replace with: a Pangolin screenshot showing the full viewer (3D view + image strip + UI panel) on KITTI 00.</em>
-  </div>
+  <img src="assets/pangolin_viewer.png" alt="Pangolin viewer" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
   <figcaption><strong>Figure 5.</strong> Live Pangolin viewer in operation. Trajectory line in yellow, past camera frustums in pink/blue with recency colouring, current camera as the larger red frustum, sparse map points coloured by accumulation order, current rectified stereo pair as the bottom strip.</figcaption>
 </figure>
 
 <figure>
-  <div class="placeholder">
-    <strong>[FIGURE PLACEHOLDER]</strong><br>
-    <em>Replace with: a zoomed crop of the bottom image strip showing the live ORB overlay (soft-green keypoints + yellow PnP inliers). Save as <code>assets/images/keypoint_overlay.png</code>.</em>
-  </div>
+  <img src="assets/orb_overlay.png" alt="ORB keypoint overlay" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
   <figcaption><strong>Figure 6.</strong> Live ORB feature overlay on the image strip. Every detected keypoint is drawn as a small soft-green circle; the subset that survived the RANSAC PnP step (the inliers used to estimate motion in this frame) is overlaid as a larger yellow circle. The dominance of yellow over green is a direct visual readout of tracking health.</figcaption>
 </figure>
 
