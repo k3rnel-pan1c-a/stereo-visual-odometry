@@ -127,11 +127,17 @@ The system processes each stereo frame through a fixed sequence of stages. The i
 
 ### 2.2 Feature extraction
 
-We use the **ORB** descriptor of Rublee et al. [[3](#ref3)] via OpenCV's `cv::ORB`. ORB pairs an oriented FAST keypoint detector with a rotationally-invariant binary BRIEF descriptor; binary descriptors enable extremely fast matching with the Hamming distance, which is what makes ORB-SLAM able to run in real time on a CPU. We extract a fixed budget of <span class="todo">XXXX</span> features per image (configurable via `Config.orb_features`), independently in the left and right images. The same number is used for both members of a stereo pair so that the matcher has a fair candidate set on each side.
+We use the **ORB** descriptor of Rublee et al. [[3](#ref3)] via OpenCV's `cv::ORB`. ORB pairs an oriented FAST keypoint detector with a rotationally-invariant binary BRIEF descriptor; binary descriptors enable extremely fast matching with the Hamming distance, which is what makes ORB-SLAM able to run in real time on a CPU. We extract a fixed budget of **3000** features per image (configurable via `Config.orb_features`), independently in the left and right images. The same number is used for both members of a stereo pair so that the matcher has a fair candidate set on each side.
 
 ### 2.3 Sparse stereo matching
 
-Given the rectified KITTI stereo pair (or our manually rectified ZED pair, see §[2.7](#27-zed-stereo-capture-without-the-sdk)), corresponding features lie on the same image row up to a small vertical tolerance. We match each left descriptor to its nearest right neighbour by Hamming distance using OpenCV's brute-force matcher in cross-check mode, then enforce two geometric filters: a vertical (epipolar) tolerance $|y_L - y_R| < \tau_y$ (default $\tau_y = 1.5$ px), and a positive disparity bound $d = u_L - u_R > d_\mathrm{min}$ (default $d_\mathrm{min} = 2$ px) to reject distant or background matches. For every surviving match we compute the metric 3D point in the current camera frame using
+Given the rectified KITTI stereo pair (or our manually rectified ZED pair, see §[2.7](#27-zed-stereo-capture-without-the-sdk)), corresponding features lie on the same image row up to a small vertical tolerance. We match each left descriptor to its nearest right neighbour by Hamming distance using OpenCV's brute-force matcher in cross-check mode, then enforce two geometric filters that together discard implausible left-right correspondences:
+
+- **Epipolar gate** $\lvert y_L - y_R \rvert < \tau_y$ (default $\tau_y = 1.5$ px). After stereo rectification, the *epipolar lines* — the geometric loci on which a feature in one image must lie when seen from the other camera — coincide with horizontal scanlines. So a true correspondence has the same $y$-coordinate in both images, up to small residual rectification error and feature-localization noise. Anything with a $y$ disagreement larger than $\tau_y$ pixels almost certainly is not a real match and is dropped.
+
+- **Disparity gate** $d = u_L - u_R > d_\mathrm{min}$ (default $d_\mathrm{min} = 2$ px). The horizontal pixel offset between the matched feature in the left and right images is the *disparity*, and it inversely encodes scene depth via $Z = f_x B / d$. A *positive* disparity (left feature to the right of the corresponding right feature) corresponds to a finite, in-front-of-camera 3D point; near-zero disparity corresponds to points at or near infinity, where the depth estimate becomes catastrophically uncertain (the $1/d$ relationship blows up). The $d_\mathrm{min}$ floor rejects matches whose triangulated depth would be too far away to trust.
+
+For every surviving match we compute the metric 3D point in the current camera frame using
 
 $$
 Z = \frac{f_x \cdot B}{d}, \quad
