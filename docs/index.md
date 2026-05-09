@@ -236,12 +236,12 @@ The headline numbers — 1.44% drift on KITTI 07 and 1.02% on KITTI 00 — are w
 ## 4. Qualitative Results
 
 <figure>
-  <img src="output/seq_07/outputs/trajectory_plot.png" alt="KITTI 07 trajectory" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  <img src="assets/trajectory_plot_07.png" alt="KITTI 07 trajectory" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
   <figcaption><strong>Figure 3.</strong> Estimated trajectory (red) vs ground truth (green) on KITTI sequence 07, top-down view (1101 frames, 695 m closed loop). The estimated path tracks the ground truth closely throughout; the small residual offset that visibly appears around sharp turns is the source of the 17.6 m ATE max — see §3.6.</figcaption>
 </figure>
 
 <figure>
-  <img src="output/seq_00/outputs/trajectory_plot.png" alt="KITTI 00 trajectory" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  <img src="assets/trajectory_plot_00.png" alt="KITTI 00 trajectory" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
   <figcaption><strong>Figure 4.</strong> Estimated trajectory (red) vs ground truth (green) on KITTI sequence 00 (4541 frames, 3.7 km). The frontend recovers the global shape of the urban route; drift accumulates non-uniformly across the sequence, with the largest excursions visible at sharp turns. Final-position drift is 1.02% — without backend BA or loop closure, no mechanism corrects these excursions, but they remain bounded over the full 3.7 km.</figcaption>
 </figure>
 
@@ -262,12 +262,12 @@ The headline numbers — 1.44% drift on KITTI 07 and 1.02% on KITTI 00 — are w
 </figure>
 
 <figure>
-  <img src="output/seq_07/outputs/stereo_matches/frame_000000.png" alt="Stereo matches" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  <img src="assets/stereo_matches.png" alt="Stereo matches" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
   <figcaption><strong>Figure 7.</strong> Sparse stereo matches between left and right images of frame 0 (KITTI 07). Lines connect matched ORB keypoints; only matches that pass the epipolar and disparity filters are shown.</figcaption>
 </figure>
 
 <figure>
-  <img src="output/seq_07/outputs/temporal_matches/frame_000000_000001.png" alt="Temporal matches" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  <img src="assets/temporal_matches.png" alt="Temporal matches" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
   <figcaption><strong>Figure 8.</strong> Inlier feature matches between consecutive left frames (KITTI 07, frames 0 → 1) after RANSAC PnP. These are the correspondences that drive motion estimation.</figcaption>
 </figure>
 
