@@ -177,7 +177,7 @@ For the supplementary qualitative demo we use a Stereolabs ZED camera as a gener
 
 The viewer runs in its own `std::thread` and is fed by the main VO loop through a mutex-protected buffer (trajectory of poses, FIFO-capped 3D point cloud, current image). The render thread runs at ~60 Hz independently of the VO frame rate. The 3D view shows the trajectory as a polyline, every camera pose as a small wireframe frustum (recency-coloured for path readability), the latest pose as a larger red frustum, and the accumulated map as coloured points. A side panel of Pangolin `Var`s exposes runtime toggles for points / trajectory / frustums, a frustum stride slider, a follow-camera mode, and point size. A wide image strip at the bottom shows the current rectified stereo pair side by side, with a thin separator marking the boundary.
 
-**Live ORB feature overlay.** To make the system's tracking behaviour transparent at a glance, every detected ORB keypoint is drawn on the image strip as a small soft-green circle, and the subset of left-image keypoints that survived the RANSAC PnP step (i.e. the *PnP inliers* for the current frame) is overlaid as larger yellow circles. The visual dominance of yellow vs.\ green at any instant is a direct readout of how well motion estimation is working: dense yellow on textured frames, very few yellow markers on motion-blurred or low-texture frames preceding a tracking loss.
+**Live ORB feature overlay.** To make the system's tracking behaviour transparent at a glance, every detected ORB keypoint is drawn on the image strip as a small soft-green circle, and the subset of left-image keypoints that survived the RANSAC PnP step (i.e. the *PnP inliers* for the current frame) is overlaid as larger yellow circles. The visual dominance of yellow vs. green at any instant is a direct readout of how well motion estimation is working: dense yellow on textured frames, very few yellow markers on motion-blurred or low-texture frames preceding a tracking loss.
 
 ### 2.9 Obstacles encountered
 
@@ -206,7 +206,7 @@ Three quantitative metrics are reported, all computed against the KITTI ground-t
 
 - **ATE (Absolute Trajectory Error).** For each frame, the Euclidean distance between estimated and ground-truth camera position. We report RMSE, mean, and max over all frames. Both trajectories share the same origin (frame 0), so no Sim/SE3 alignment is performed.
 - **RPE (Relative Pose Error)** over a fixed delta of 10 frames. For each pair $(i, i+\Delta)$ we compute the relative motion in the estimate and in the ground truth, and report the RMSE of the translational component (metres) and the angular component of the rotational error (degrees).
-- **Drift %** $= 100 \cdot \|\hat{\mathbf{p}}_{N} - \mathbf{p}^{*}_{N}\| / L$, where $\hat{\mathbf{p}}_N$ is the estimated final position, $\mathbf{p}^{*}_N$ the ground-truth final position, and $L$ the total ground-truth trajectory length. A single-number summary of cumulative drift.
+- **Drift %** $= 100 \cdot \|\hat{\mathbf{p}}_{N} - \mathbf{p}^{\ast}_{N}\| / L$, where $\hat{\mathbf{p}}_N$ is the estimated final position, $\mathbf{p}^{\ast}_N$ the ground-truth final position, and $L$ the total ground-truth trajectory length. A single-number summary of cumulative drift.
 
 ### 3.3 Baseline
 
