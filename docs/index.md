@@ -65,24 +65,28 @@ table td {
 </style>
 
 <div class="author-block">
-  <strong><span class="todo">[Your Name]</span></strong> ·
-  <a href="mailto:modusbitxaminer@gmail.com">modusbitxaminer@gmail.com</a><br>
+  <strong><span class="todo">[Anas Badr]</span></strong> ·
+  <a href="mailto:anas.badr@ejust.edu.eg">anas.badr@ejust.edu.eg</a><br>
   Egypt-Japan University of Science and Technology<br>
-  <a href="https://github.com/"><span class="todo">[github.com/YOURUSER/REPO]</span></a> ·
+  <a href="https://github.com/k3rnel-pan1c-a/monoslam/"><span class="todo">[github.com/k3rnel-pan1c-a/monoslam]</span></a> ·
   <a href="report.pdf">PDF version</a>
 </div>
 
 ## Abstract
 
-Visual odometry (VO) is the task of recovering a camera's 6-DoF trajectory from its image stream alone, and is the perception backbone of self-driving cars, augmented reality, and autonomous drones. We present a stereo VO system inspired architecturally by ORB-SLAM 2/3, simplified to a feature-based frontend (no IMU, no loop closure, no full bundle adjustment) and implemented from scratch in C++ on top of OpenCV and Pangolin. The system extracts ORB features in each rectified stereo pair, matches them between left and right to obtain metric depth, tracks them temporally to form 3D-2D correspondences, and recovers per-frame motion via PnP with RANSAC. On KITTI Odometry sequence 07 we achieve a final-position drift of <span class="todo">XX.X%</span> over <span class="todo">~XX m</span> of ground-truth trajectory, comfortably below our 10% target; on the longer urban sequence 00 the trajectory shape closely follows the ground truth despite monotonically accumulating drift; and a hand-held capture from a ZED stereo camera demonstrates real-time operation on previously unseen indoor/outdoor data.
+Visual odometry (VO) is the task of recovering a camera's 6-DoF trajectory from its image stream alone, and is the perception backbone of self-driving cars, augmented reality, and autonomous drones. We present a stereo VO system inspired architecturally by ORB-SLAM 2/3, simplified to a feature-based frontend (no IMU, no loop closure, no full bundle adjustment) and implemented from scratch in C++ on top of OpenCV and Pangolin. The system extracts ORB features in each rectified stereo pair, matches them between left and right to obtain metric depth, tracks them temporally to form 3D-2D correspondences, and recovers per-frame motion via PnP with RANSAC. <span class="todo">[TODO: re-run on full KITTI 07 — current numbers below are from a 5-frame test run.]</span> Preliminary results on KITTI sequence 07 give an ATE translational RMSE of **0.24 m** (max 0.40 m) over the first 5 frames; full-sequence drift will be reported once the full ~1100-frame run is completed. The longer urban sequence 00 will be evaluated for drift accumulation behaviour, and a hand-held capture from a ZED stereo camera demonstrates real-time operation on previously unseen indoor/outdoor data.
 
 <figure>
   <div class="placeholder">
-    <strong>[FIGURE PLACEHOLDER]</strong><br>
-    <em>Replace with: a Pangolin viewer screenshot showing the full system running on KITTI 07 (trajectory + frustums + point cloud + image strip).</em><br>
-    Save as <code>assets/images/teaser.png</code> and use <code>&lt;img src="assets/images/teaser.png"&gt;</code>.
+    <strong>[TEASER PLACEHOLDER — recommended: short MP4 video, 5-10 s loop]</strong><br>
+    <em>Record the Pangolin viewer running on KITTI 07 (e.g. with OBS Studio or <code>ffmpeg -f x11grab</code>), compress with <code>ffmpeg -i in.mp4 -vcodec libx264 -crf 28 -an out.mp4</code>, save as <code>assets/videos/teaser.mp4</code>.</em><br>
+    Embed with:
+    <pre style="text-align:left; background:#fff; border:1px solid #ddd; padding:8px; margin-top:6px;">&lt;video autoplay loop muted playsinline width="100%" style="border-radius:4px;"&gt;
+  &lt;source src="assets/videos/teaser.mp4" type="video/mp4"&gt;
+&lt;/video&gt;</pre>
+    A static screenshot at <code>assets/images/teaser.png</code> works as a fallback.
   </div>
-  <figcaption><strong>Figure 1 (teaser).</strong> Live Pangolin visualization on KITTI sequence 07. Yellow line is the estimated trajectory; the red wireframe is the current camera; faint pink/blue frustums are past poses; scattered points are the accumulated sparse map; the strip below is the current rectified stereo pair.</figcaption>
+  <figcaption><strong>Figure 1 (teaser).</strong> Live Pangolin visualization on KITTI sequence 07. Yellow line is the estimated trajectory; the red wireframe is the current camera; faint pink/blue frustums are past poses; scattered points are the accumulated sparse map; the strip below is the current rectified stereo pair, with extracted ORB keypoints overlaid in soft green and PnP inliers highlighted in yellow.</figcaption>
 </figure>
 
 ## 1. Introduction
@@ -164,6 +168,8 @@ For the supplementary qualitative demo we use a Stereolabs ZED camera as a gener
 
 The viewer runs in its own `std::thread` and is fed by the main VO loop through a mutex-protected buffer (trajectory of poses, FIFO-capped 3D point cloud, current image). The render thread runs at ~60 Hz independently of the VO frame rate. The 3D view shows the trajectory as a polyline, every camera pose as a small wireframe frustum (recency-coloured for path readability), the latest pose as a larger red frustum, and the accumulated map as coloured points. A side panel of Pangolin `Var`s exposes runtime toggles for points / trajectory / frustums, a frustum stride slider, a follow-camera mode, and point size. A wide image strip at the bottom shows the current rectified stereo pair side by side, with a thin separator marking the boundary.
 
+**Live ORB feature overlay.** To make the system's tracking behaviour transparent at a glance, every detected ORB keypoint is drawn on the image strip as a small soft-green circle, and the subset of left-image keypoints that survived the RANSAC PnP step (i.e. the *PnP inliers* for the current frame) is overlaid as larger yellow circles. The visual dominance of yellow vs.\ green at any instant is a direct readout of how well motion estimation is working: dense yellow on textured frames, very few yellow markers on motion-blurred or low-texture frames preceding a tracking loss.
+
 ### 2.9 Obstacles encountered
 
 A few non-obvious issues consumed disproportionate debugging time and are worth recording:
@@ -181,8 +187,8 @@ We evaluate quantitatively on two standard sequences from the KITTI Odometry ben
 
 | Sequence    | Frames     | Length (m) | Resolution      | Notes                                    |
 |:------------|-----------:|-----------:|:----------------|:-----------------------------------------|
-| KITTI 07    | ~1100      | <span class="todo">XX</span> | 1241 × 376      | short closed loop                        |
-| KITTI 00    | ~4540      | <span class="todo">XX</span> | 1241 × 376      | long urban, with loops                   |
+| KITTI 07    | 1101       | ~695       | 1241 × 376      | short closed loop                        |
+| KITTI 00    | 4541       | ~3724      | 1241 × 376      | long urban, with loops                   |
 | ZED custom  | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">describe environment</span> |
 
 ### 3.2 Evaluation metrics
@@ -201,12 +207,17 @@ As a no-effort floor we report a **constant-pose baseline**: every frame's estim
 
 <p align="center"><strong>Table 1.</strong> Main results on KITTI Odometry (RPE over 10-frame delta; lower is better in all columns).</p>
 
-| Sequence  | Method                  | ATE RMSE (m) | ATE max (m) | RPE-trans (m) | RPE-rot (deg) | Drift (%) |
-|:----------|:------------------------|-------------:|------------:|--------------:|--------------:|----------:|
-| KITTI 07  | Constant-pose baseline  | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | 100.0     |
-| KITTI 07  | **Ours**                | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> |
-| KITTI 00  | Constant-pose baseline  | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | 100.0     |
-| KITTI 00  | **Ours**                | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> |
+| Sequence              | Method                  | ATE RMSE (m) | ATE max (m) | RPE-trans (m) | RPE-rot (deg) | Drift (%) |
+|:----------------------|:------------------------|-------------:|------------:|--------------:|--------------:|----------:|
+| KITTI 07              | Constant-pose baseline  | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | 100.0     |
+| KITTI 07 (5 frames †) | **Ours**                | 0.24         | 0.40        | n/a ‡         | n/a ‡         | n/a §     |
+| KITTI 07 (full)       | **Ours**                | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> |
+| KITTI 00              | Constant-pose baseline  | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | 100.0     |
+| KITTI 00              | **Ours**                | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> | <span class="todo">XX</span> |
+
+<small>† Preliminary 5-frame test run; included to show the evaluation pipeline is working end-to-end. Full-sequence numbers will replace this row once the full KITTI 07 run completes.<br>
+‡ RPE is computed over a 10-frame delta and is therefore undefined for $n=5$.<br>
+§ Drift % requires a non-zero ground-truth trajectory length; the first 5 GT frames have negligible motion, so the denominator collapses to ~0 and the percentage is ill-defined. Will report on the full sequence.</small>
 
 ### 3.5 Sensitivity studies
 
@@ -265,9 +276,17 @@ We sweep three parameters and report their effect on KITTI 07.
 <figure>
   <div class="placeholder">
     <strong>[FIGURE PLACEHOLDER]</strong><br>
+    <em>Replace with: a zoomed crop of the bottom image strip showing the live ORB overlay (soft-green keypoints + yellow PnP inliers). Save as <code>assets/images/keypoint_overlay.png</code>.</em>
+  </div>
+  <figcaption><strong>Figure 6.</strong> Live ORB feature overlay on the image strip. Every detected keypoint is drawn as a small soft-green circle; the subset that survived the RANSAC PnP step (the inliers used to estimate motion in this frame) is overlaid as a larger yellow circle. The dominance of yellow over green is a direct visual readout of tracking health.</figcaption>
+</figure>
+
+<figure>
+  <div class="placeholder">
+    <strong>[FIGURE PLACEHOLDER]</strong><br>
     <em>Replace with the saved <code>outputs/stereo_matches/frame_000000.png</code>.</em>
   </div>
-  <figcaption><strong>Figure 6.</strong> Sparse stereo matches between left and right images of frame 0. Lines connect matched ORB keypoints; only matches that pass the epipolar and disparity filters are shown.</figcaption>
+  <figcaption><strong>Figure 7.</strong> Sparse stereo matches between left and right images of frame 0. Lines connect matched ORB keypoints; only matches that pass the epipolar and disparity filters are shown.</figcaption>
 </figure>
 
 <figure>
@@ -275,7 +294,7 @@ We sweep three parameters and report their effect on KITTI 07.
     <strong>[FIGURE PLACEHOLDER]</strong><br>
     <em>Replace with the saved <code>outputs/temporal_matches/frame_000000_000001.png</code>.</em>
   </div>
-  <figcaption><strong>Figure 7.</strong> Inlier feature matches between consecutive left frames after RANSAC PnP. These are the correspondences that drive motion estimation.</figcaption>
+  <figcaption><strong>Figure 8.</strong> Inlier feature matches between consecutive left frames after RANSAC PnP. These are the correspondences that drive motion estimation.</figcaption>
 </figure>
 
 <figure>
@@ -283,7 +302,7 @@ We sweep three parameters and report their effect on KITTI 07.
     <strong>[FIGURE PLACEHOLDER]</strong><br>
     <em>Replace with: a Pangolin screenshot from the ZED capture.</em>
   </div>
-  <figcaption><strong>Figure 8.</strong> Qualitative result on a hand-held ZED capture in <span class="todo">describe environment, e.g. outside the CSE building</span>. The reconstructed trajectory and sparse map demonstrate that the system generalises to non-driving, non-KITTI scenes.</figcaption>
+  <figcaption><strong>Figure 9.</strong> Qualitative result on a hand-held ZED capture in <span class="todo">describe environment, e.g. outside the CSE building</span>. The reconstructed trajectory and sparse map demonstrate that the system generalises to non-driving, non-KITTI scenes.</figcaption>
 </figure>
 
 <figure>
@@ -291,7 +310,7 @@ We sweep three parameters and report their effect on KITTI 07.
     <strong>[FIGURE PLACEHOLDER]</strong><br>
     <em>Replace with: a failure-case screenshot or trajectory plot.</em>
   </div>
-  <figcaption><strong>Figure 9.</strong> Failure case: <span class="todo">describe — e.g. a frame with motion blur and few inliers caused PnP to fail; the trajectory holds at the previous pose for one step before resuming</span>.</figcaption>
+  <figcaption><strong>Figure 10.</strong> Failure case: <span class="todo">describe — e.g. a frame with motion blur and few inliers caused PnP to fail; the trajectory holds at the previous pose for one step before resuming</span>.</figcaption>
 </figure>
 
 ## 5. Conclusion and Future Work
