@@ -89,7 +89,7 @@ Visual odometry (VO) is the task of recovering a camera's 6-DoF trajectory from 
 
 <figure>
   <video autoplay loop muted playsinline width="100%" style="border-radius: 4px;">
-    <source src="assets/teaser.mp4" type="video/mp4">
+    <source src="assets/teaser_2.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
   <figcaption><strong>Figure 1 (teaser).</strong> Live Pangolin visualization on KITTI sequence 07. Yellow line is the estimated trajectory; the red wireframe is the current camera; faint pink/blue frustums are past poses; scattered points are the accumulated sparse map; the strip below is the current rectified stereo pair, with extracted ORB keypoints overlaid in soft green and PnP inliers highlighted in yellow.</figcaption>
