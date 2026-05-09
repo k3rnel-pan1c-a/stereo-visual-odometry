@@ -149,7 +149,7 @@ where $f_x, f_y, c_x, c_y$ are the rectified intrinsics and $B$ is the stereo ba
 
 ### 2.4 Temporal matching
 
-To estimate motion between frames $k\!-\!1$ and $k$ we match the ORB descriptors of left frame $k\!-\!1$ to those of left frame $k$ with a cross-check brute-force matcher. Matches whose Hamming distance exceeds `Config.max_match_distance` (default 50) are discarded. A match is usable for PnP only if the corresponding feature in frame $k\!-\!1$ has a valid stereo depth (i.e. it is one of the points triangulated in the previous step). This yields the (3D-in-frame-$k\!-\!1$, 2D-in-frame-$k$) correspondence list that drives motion estimation.
+To estimate motion between frames $k-1$ and $k$ we match the ORB descriptors of left frame $k-1$ to those of left frame $k$ with a cross-check brute-force matcher. Matches whose Hamming distance exceeds `Config.max_match_distance` (default 50) are discarded. A match is usable for PnP only if the corresponding feature in frame $k-1$ has a valid stereo depth (i.e. it is one of the points triangulated in the previous step). This yields the (3D-in-frame-$k-1$, 2D-in-frame-$k$) correspondence list that drives motion estimation.
 
 ### 2.5 Motion estimation: 3D-2D PnP with RANSAC
 
