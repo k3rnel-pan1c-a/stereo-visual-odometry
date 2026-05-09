@@ -287,6 +287,12 @@ int main(int argc, char** argv) {
             ground_truth_poses,
             "../outputs/trajectory_plot.png"
         );
+
+        EvaluationResult eval = Trajectory::evaluate(
+            estimated_poses, ground_truth_poses, 10
+        );
+        Trajectory::printEvaluation(eval);
+        Trajectory::saveEvaluation("../outputs/evaluation.txt", eval);
     }
 
     std::cout << "\nDone." << std::endl;
