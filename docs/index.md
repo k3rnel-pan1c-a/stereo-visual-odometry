@@ -77,15 +77,10 @@ table td {
 Visual odometry (VO) is the task of recovering a camera's 6-DoF trajectory from its image stream alone, and is the perception backbone of self-driving cars, augmented reality, and autonomous drones. We present a stereo VO system inspired architecturally by ORB-SLAM 2/3, simplified to a feature-based frontend (no IMU, no loop closure, no full bundle adjustment) and implemented from scratch in C++ on top of OpenCV and Pangolin. The system extracts ORB features in each rectified stereo pair, matches them between left and right to obtain metric depth, tracks them temporally to form 3D-2D correspondences, and recovers per-frame motion via PnP with RANSAC. <span class="todo">[TODO: re-run on full KITTI 07 — current numbers below are from a 5-frame test run.]</span> Preliminary results on KITTI sequence 07 give an ATE translational RMSE of **0.24 m** (max 0.40 m) over the first 5 frames; full-sequence drift will be reported once the full ~1100-frame run is completed. The longer urban sequence 00 will be evaluated for drift accumulation behaviour, and a hand-held capture from a ZED stereo camera demonstrates real-time operation on previously unseen indoor/outdoor data.
 
 <figure>
-  <div class="placeholder">
-    <strong>[TEASER PLACEHOLDER — recommended: short MP4 video, 5-10 s loop]</strong><br>
-    <em>Record the Pangolin viewer running on KITTI 07 (e.g. with OBS Studio or <code>ffmpeg -f x11grab</code>), compress with <code>ffmpeg -i in.mp4 -vcodec libx264 -crf 28 -an out.mp4</code>, save as <code>assets/videos/teaser.mp4</code>.</em><br>
-    Embed with:
-    <pre style="text-align:left; background:#fff; border:1px solid #ddd; padding:8px; margin-top:6px;">&lt;video autoplay loop muted playsinline width="100%" style="border-radius:4px;"&gt;
-  &lt;source src="assets/videos/teaser.mp4" type="video/mp4"&gt;
-&lt;/video&gt;</pre>
-    A static screenshot at <code>assets/images/teaser.png</code> works as a fallback.
-  </div>
+  <video autoplay loop muted playsinline width="100%" style="border-radius: 4px;">
+    <source src="assets/teaser.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
   <figcaption><strong>Figure 1 (teaser).</strong> Live Pangolin visualization on KITTI sequence 07. Yellow line is the estimated trajectory; the red wireframe is the current camera; faint pink/blue frustums are past poses; scattered points are the accumulated sparse map; the strip below is the current rectified stereo pair, with extracted ORB keypoints overlaid in soft green and PnP inliers highlighted in yellow.</figcaption>
 </figure>
 
@@ -102,10 +97,7 @@ This project implements a **feature-based stereo visual odometry frontend** insp
 ### 2.1 System overview
 
 <figure>
-  <div class="placeholder">
-    <strong>[FIGURE PLACEHOLDER]</strong><br>
-    <em>Replace with: a block diagram of the pipeline (boxes = pipeline stages, arrows = data flow). Save as <code>assets/images/pipeline.png</code>.</em>
-  </div>
+  <img src="assets/project_pipeline.png" alt="Pipeline overview" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
   <figcaption><strong>Figure 2.</strong> Pipeline overview: stereo image pair → ORB features (left + right) → stereo matching → 3D points (camera frame) → temporal matching (left k−1 ↔ left k) → 3D-2D correspondences → PnP+RANSAC → relative pose → global pose accumulation → Pangolin viewer (separate thread).</figcaption>
 </figure>
 
