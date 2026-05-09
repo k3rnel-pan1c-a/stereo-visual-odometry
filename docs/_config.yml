@@ -1,0 +1,17 @@
+theme: jekyll-theme-cayman
+
+title: Stereo Visual Odometry
+description: An ORB-SLAM 3-Inspired Pipeline — CSE 429 Final Project, Spring 2026
+
+show_downloads: false
+
+markdown: kramdown
+kramdown:
+  math_engine: mathjax
+  syntax_highlighter: rouge
+
+plugins:
+  - jekyll-relative-links
+
+include:
+  - assets
