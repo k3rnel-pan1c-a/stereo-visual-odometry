@@ -208,7 +208,9 @@ Three quantitative metrics are reported, all computed against the KITTI ground-t
 - **RPE (Relative Pose Error)** over a fixed delta of 10 frames. For each pair $(i, i+\Delta)$ we compute the relative motion in the estimate and in the ground truth, and report the RMSE of the translational component (metres) and the angular component of the rotational error (degrees).
 - **Drift %** — final position error as a fraction of total path length:
 
-$$\text{Drift} = 100 \cdot \frac{\lVert \hat{\mathbf{p}}_{N} - \mathbf{p}_{N}^{\ast} \rVert}{L}$$
+$$
+\text{Drift} = 100 \cdot \frac{\lVert \hat{\mathbf{p}}_{N} - \mathbf{p}_{N}^{\ast} \rVert}{L}
+$$
 
 where $\hat{\mathbf{p}}_N$ is the estimated final camera position, $\mathbf{p}_N^{\ast}$ the ground-truth final position, and $L$ the total ground-truth trajectory length.
 
