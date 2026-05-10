@@ -17,8 +17,8 @@ jobs:
       - name: Build Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./monoslam
-          file: ./monoslam/Dockerfile
+          context: .
+          file: ./Dockerfile
           push: false
           tags: stereo_vo:latest
           cache-from: type=gha
