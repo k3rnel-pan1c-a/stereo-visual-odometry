@@ -206,7 +206,7 @@ Three quantitative metrics are reported, all computed against the KITTI ground-t
 
 - **ATE (Absolute Trajectory Error).** For each frame, the Euclidean distance between estimated and ground-truth camera position. We report RMSE, mean, and max over all frames. Both trajectories share the same origin (frame 0), so no Sim/SE3 alignment is performed.
 - **RPE (Relative Pose Error)** over a fixed delta of 10 frames. For each pair $(i, i+\Delta)$ we compute the relative motion in the estimate and in the ground truth, and report the RMSE of the translational component (metres) and the angular component of the rotational error (degrees).
-- **Drift %** $= 100 \cdot \|\hat{\mathbf{p}}_{N} - \mathbf{p}^{\ast}_{N}\| / L$, where $\hat{\mathbf{p}}_N$ is the estimated final position, $\mathbf{p}^{\ast}_N$ the ground-truth final position, and $L$ the total ground-truth trajectory length. A single-number summary of cumulative drift.
+- **Drift %** $= 100 \cdot \lVert \hat{\mathbf{p}}_{N} - \mathbf{p}^{\ast}_{N} \rVert / L$, where $\hat{\mathbf{p}}_N$ is the estimated final position, $\mathbf{p}^{\ast}_N$ the ground-truth final position, and $L$ the total ground-truth trajectory length. A single-number summary of cumulative drift.
 
 ### 3.3 Baseline
 
