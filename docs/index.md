@@ -206,7 +206,11 @@ Three quantitative metrics are reported, all computed against the KITTI ground-t
 
 - **ATE (Absolute Trajectory Error).** For each frame, the Euclidean distance between estimated and ground-truth camera position. We report RMSE, mean, and max over all frames. Both trajectories share the same origin (frame 0), so no Sim/SE3 alignment is performed.
 - **RPE (Relative Pose Error)** over a fixed delta of 10 frames. For each pair $(i, i+\Delta)$ we compute the relative motion in the estimate and in the ground truth, and report the RMSE of the translational component (metres) and the angular component of the rotational error (degrees).
-- **Drift %** $= 100 \cdot \lVert \hat{\mathbf{p}}_{N} - \mathbf{p}^{\ast}_{N} \rVert / L$, where $\hat{\mathbf{p}}_N$ is the estimated final position, $\mathbf{p}^{\ast}_N$ the ground-truth final position, and $L$ the total ground-truth trajectory length. A single-number summary of cumulative drift.
+- **Drift %** — final position error as a fraction of total path length:
+
+$$\text{Drift} = 100 \cdot \frac{\lVert \hat{\mathbf{p}}_{N} - \mathbf{p}_{N}^{\ast} \rVert}{L}$$
+
+where $\hat{\mathbf{p}}_N$ is the estimated final camera position, $\mathbf{p}_N^{\ast}$ the ground-truth final position, and $L$ the total ground-truth trajectory length.
 
 ### 3.3 Baseline
 
@@ -243,7 +247,7 @@ We sweep three parameters and report their effect on KITTI 07.
 
 ### 3.6 Discussion of trends
 
-The headline numbers — 1.44% drift on KITTI 07 and 1.02% on KITTI 00 — are well inside our 10% target and only roughly $1.5\!-\!3\times$ worse than full ORB-SLAM 2 stereo on the same benchmark, despite our system having no backend bundle adjustment, no keyframe-based local map, and no loop closure. The two sequences expose complementary strengths and weaknesses of the pure-frontend design.
+The headline numbers — 1.44% drift on KITTI 07 and 1.02% on KITTI 00 — are well inside our 10% target and only roughly $1.5$–$3\times$ worse than full ORB-SLAM 2 stereo on the same benchmark, despite our system having no backend bundle adjustment, no keyframe-based local map, and no loop closure. The two sequences expose complementary strengths and weaknesses of the pure-frontend design.
 
 **Per-frame quality is consistent across sequences.** RPE translation over a 10-frame window is 0.39 m on seq 07 and 0.29 m on seq 00 — actually slightly *better* on the longer urban sequence, where the dense building texture supplies more well-distributed ORB features per frame. RPE rotation is higher on seq 00 (0.66° vs 0.39°), reflecting that seq 00 has more frequent turning and lane changes than seq 07's straight-and-loop layout: rotation is harder to recover than translation when only a small subset of features rotates significantly relative to the others.
 
@@ -301,7 +305,7 @@ The headline numbers — 1.44% drift on KITTI 07 and 1.02% on KITTI 00 — are w
 
 ## 5. Conclusion and Future Work
 
-We implemented a stereo visual odometry system inspired by the architecture of ORB-SLAM 2/3, simplified to a feature-based frontend with PnP-based motion estimation, and packaged it with a multi-threaded Pangolin viewer that makes the system's output legible in real time. On KITTI 07 the system achieves a final-position drift of **1.44%** over the 695 m closed loop (9.09 m ATE RMSE), comfortably below our 10% target; on KITTI 00 drift is **1.02%** over the full 3.7 km urban path (22.96 m ATE RMSE), only roughly $1.5\!-\!3\times$ worse than full-backend ORB-SLAM 2 on the same benchmark despite running entirely without bundle adjustment or loop closure. A custom ZED capture confirms qualitative generalisation to non-driving scenes.
+We implemented a stereo visual odometry system inspired by the architecture of ORB-SLAM 2/3, simplified to a feature-based frontend with PnP-based motion estimation, and packaged it with a multi-threaded Pangolin viewer that makes the system's output legible in real time. On KITTI 07 the system achieves a final-position drift of **1.44%** over the 695 m closed loop (9.09 m ATE RMSE), comfortably below our 10% target; on KITTI 00 drift is **1.02%** over the full 3.7 km urban path (22.96 m ATE RMSE), only roughly $1.5$–$3\times$ worse than full-backend ORB-SLAM 2 on the same benchmark despite running entirely without bundle adjustment or loop closure. A custom ZED capture confirms qualitative generalisation to non-driving scenes.
 
 **Limitations.** The system has no mechanism to bound drift over long trajectories. There is no bundle adjustment to refine local pose estimates, no keyframe-based local map (the system tracks against the immediately previous frame, not a stable map of nearby keyframes), and no loop closure. Tracking can be lost on low-texture frames; the current fallback simply reuses the previous pose, which inserts a one-frame discontinuity rather than attempting a true relocalisation.
 
